@@ -37,17 +37,17 @@
 		) as HTMLInputElement;
 
 		const switchTheme = () => {
-			document.documentElement.classList.toggle('dark');
-			if (document.documentElement.classList.contains('dark')) {
-				localStorage.setItem('theme', 'dark');
-			}
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
 		};
 
-		if (
-			localStorage.theme === 'dark' ||
-			(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-		) {
-			switchTheme();
+		// Check if dark mode should be enabled
+		const isDarkMode = localStorage.theme === 'dark' || 
+		                   (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+		if (isDarkMode) {
+			document.documentElement.classList.add('dark');
+			button.checked = true;
 		}
 
 		button.addEventListener('click', () => {

@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blogs');
+// Filter out draft posts and sort by date (newest first), show only first 3
+const recentPosts = posts
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 3); // Show only 3 most recent posts
+---
+
+<section
+	data-testid="blog"
+	id="blog"
+	class="mt-40 mb-10 flex flex-col items-center justify-center md:mb-0 md:h-screen"
+>
+	<h2 class="font-monospace text-2xl text-orange lg:text-4xl">Blogs</h2>
+	<span class="mb-10 h-1 w-10 bg-orange"></span>
+	
+	{recentPosts.length === 0 ? (
+		<p class="text-center text-gray-600 dark:text-gray-400">
+			No blog posts yet. Check back soon!
+		</p>
+	) : (
+		<div class="mb-10 flex w-full flex-col flex-wrap items-center gap-6 md:flex-row">
+			{recentPosts.map((post) => (
+				<div class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+					<div class="mb-4">
+						<h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+							{post.data.title}
+						</h3>
+						<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+							{post.data.publishDate.toLocaleDateString()}
+						</p>
+						<p class="text-gray-700 dark:text-gray-300">
+							{post.data.description}
+						</p>
+					</div>
+					
+					{post.data.tags && post.data.tags.length > 0 && (
+						<div class="mb-4 flex flex-wrap gap-2">
+							{post.data.tags.map(tag => (
+								<span class="rounded-full bg-orange/20 px-3 py-1 text-xs font-medium text-orange">
+									{tag}
+								</span>
+							))}
+						</div>
+					)}
+					
+					<a
+						href={`/blog/${post.slug}`}
+						class="inline-flex items-center rounded-lg bg-orange px-4 py-2 text-sm font-medium text-white hover:bg-orange/90 focus:outline-none focus:ring-4 focus:ring-orange/50"
+					>
+						Read More
+						<svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+						</svg>
+					</a>
+				</div>
+			))}
+		</div>
+	)}
+	
+	{recentPosts.length > 0 && (
+		<a
+			href="/blog"
+			class="flex flex-row text-black hover:text-orange dark:text-white dark:hover:text-orange"
+			aria-label="view all blog posts"
+		>
+			View all blog posts
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="ml-1 h-6 w-6"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path>
+			</svg>
+		</a>
+	)}
+</section>

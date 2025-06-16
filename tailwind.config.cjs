@@ -14,8 +14,10 @@ module.exports = {
 		},
 		colors: {
 			black: '#000',
-			white: '#fff',
-			orange: '#E06330',
+			white: '#fff0db',
+			orange: '#DC143C',
+			green:'#6ea86c',
+			crimson: '#DC143C',
 		},
 		fontFamily: {
 			// Headings

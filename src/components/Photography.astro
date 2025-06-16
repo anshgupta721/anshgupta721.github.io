@@ -1,0 +1,249 @@
+---
+// Photography.astro
+const featuredPhotos = [
+  { src: "/images/DJI_0002.JPG", alt: "Mountain Sunrise" },
+  { src: "/images/DJI_0015.JPG", alt: "Street Portrait" },
+//   { src: "/images/DJI_0020.JPG", alt: "Urban Landscape" },
+//   { src: "/images/DJI_0008.JPG", alt: "Golden Hour" },
+];
+---
+
+<section
+    data-testid="photography"
+    id="photography"
+    class="mb-10 flex flex-col items-center justify-center md:mb-0 min-h-screen"
+>
+    <h2 class="font-monospace text-2xl text-orange lg:text-4xl">Photography</h2>
+    <span class="mb-10 h-1 w-10 bg-orange"></span>
+    
+    <div class="gallery-container rounded-xl shadow-lg relative">
+        <div class="gallery-slider" id="gallerySlider">
+            {featuredPhotos.map((photo, index) => (
+                <div class="gallery-slide">
+                    <img 
+                        src={photo.src} 
+                        alt={photo.alt}
+                        class="w-full h-auto object-cover"
+                        loading={index === 0 ? "eager" : "lazy"}
+                    />
+                </div>
+            ))}
+        </div>
+        
+        <!-- Navigation Dots -->
+        <div class="gallery-dots absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {featuredPhotos.map((_, index) => (
+                <button 
+                    class="gallery-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white/80 transition-colors duration-200"
+                    data-slide={index}
+                    aria-label={`Go to slide ${index + 1}`}
+                ></button>
+            ))}
+        </div>
+        
+        <!-- Navigation Arrows -->
+        <button 
+            class="gallery-nav gallery-prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-colors duration-200"
+            aria-label="Previous image"
+        >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        
+        <button 
+            class="gallery-nav gallery-next absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-colors duration-200"
+            aria-label="Next image"
+        >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+        <!-- Full Gallery Button - Fixed Position -->
+        <a
+            href="/gallery"
+            class="full-gallery-button absolute bottom-4 left-4 inline-flex items-center rounded-lg bg-orange px-4 py-2 text-sm font-medium text-white hover:bg-orange/90 focus:outline-none focus:ring-4 focus:ring-orange/50 transition-colors duration-200 z-10"
+        >
+            View Full Gallery
+            <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </a>
+    </div>
+</section>
+
+<style>
+    .gallery-button-wrapper {
+        width: 75%;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .gallery-container {
+        overflow: hidden;
+        width: 75%;
+        position: relative;
+        aspect-ratio: 16/9;
+        background: #f3f4f6;
+    }
+
+    .gallery-slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        height: 100%;
+    }
+
+    .gallery-slide {
+        min-width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .gallery-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .gallery-dot.active {
+        background-color: white;
+    }
+
+    .gallery-nav {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .gallery-container:hover .gallery-nav {
+        opacity: 1;
+    }
+
+    /* Pause animation on hover */
+    .gallery-container:hover .gallery-slider {
+        animation-play-state: paused;
+    }
+
+    @media (max-width: 768px) {
+        .gallery-container {
+            width: 90%;
+        }
+        
+        .gallery-nav {
+            opacity: 1;
+        }
+    }
+</style>
+
+<script is:inline>
+    window.addEventListener('load', () => {
+        const slider = document.getElementById('gallerySlider');
+        const slides = slider.querySelectorAll('.gallery-slide');
+        const dots = document.querySelectorAll('.gallery-dot');
+        const prevBtn = document.querySelector('.gallery-prev');
+        const nextBtn = document.querySelector('.gallery-next');
+        const container = document.querySelector('.gallery-container');
+        
+        let currentSlide = 0;
+        let autoSlideInterval;
+        let isHovered = false;
+        let isPageVisible = !document.hidden;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+            updateSlider();
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide(); // Always clear any existing interval
+            
+            // Only start auto-slide if page is visible and not hovered
+            if (isPageVisible && !isHovered) {
+                autoSlideInterval = setInterval(nextSlide, 4000);
+            }
+        }
+
+        function stopAutoSlide() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+                autoSlideInterval = null;
+            }
+        }
+
+        // Manual navigation with temporary pause
+        function handleManualNavigation(navigationFn) {
+            navigationFn();
+            stopAutoSlide();
+            // Resume auto-slide after 6 seconds if conditions are met
+            setTimeout(() => {
+                if (isPageVisible && !isHovered) {
+                    startAutoSlide();
+                }
+            }, 6000);
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', () => {
+            handleManualNavigation(nextSlide);
+        });
+
+        prevBtn.addEventListener('click', () => {
+            handleManualNavigation(prevSlide);
+        });
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                handleManualNavigation(() => goToSlide(index));
+            });
+        });
+
+        // Hover pause/resume
+        container.addEventListener('mouseenter', () => {
+            isHovered = true;
+            stopAutoSlide();
+        });
+
+        container.addEventListener('mouseleave', () => {
+            isHovered = false;
+            startAutoSlide();
+        });
+
+        // Page visibility handling
+        document.addEventListener('visibilitychange', () => {
+            isPageVisible = !document.hidden;
+            
+            if (isPageVisible) {
+                // Page became visible, start auto-slide if not hovered
+                startAutoSlide();
+            } else {
+                // Page became hidden, stop auto-slide
+                stopAutoSlide();
+            }
+        });
+
+        // Initialize
+        updateSlider();
+        startAutoSlide();
+    });
+</script>

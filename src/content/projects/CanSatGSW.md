@@ -1,8 +1,8 @@
 ---
 inProgress: false
-title: Project title
+title: CanSat Ground Station
 description: Project description
 img_alt: project image alt text
 link: https://github.com/veranikabarel?tab=repositories
-tags: ['React', 'CSS', 'Typescript']
+tags: ['QT Creator', 'C++', 'UI Design']
 ---

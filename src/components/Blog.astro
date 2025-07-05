@@ -14,8 +14,8 @@ const recentPosts = posts
 	id="blog"
 	class="mt-40 mb-10 flex flex-col items-center justify-center md:mb-0 md:h-screen"
 >
-	<h2 class="font-monospace text-2xl text-orange lg:text-4xl">Blogs</h2>
-	<span class="mb-10 h-1 w-10 bg-orange"></span>
+	<h2 class="font-monospace text-2xl text-theme lg:text-4xl">Blogs</h2>
+	<span class="mb-10 h-1 w-10 bg-theme"></span>
 	
 	{recentPosts.length === 0 ? (
 		<p class="text-center text-gray-600 dark:text-gray-400">
@@ -40,7 +40,7 @@ const recentPosts = posts
 					{post.data.tags && post.data.tags.length > 0 && (
 						<div class="mb-4 flex flex-wrap gap-2">
 							{post.data.tags.map(tag => (
-								<span class="rounded-full bg-orange/20 px-3 py-1 text-xs font-medium text-orange">
+								<span class="rounded-full bg-theme/20 px-3 py-1 text-xs font-medium text-theme">
 									{tag}
 								</span>
 							))}
@@ -49,7 +49,7 @@ const recentPosts = posts
 					
 					<a
 						href={`/blog/${post.slug}`}
-						class="inline-flex items-center rounded-lg bg-orange px-4 py-2 text-sm font-medium text-white hover:bg-orange/90 focus:outline-none focus:ring-4 focus:ring-orange/50"
+						class="inline-flex items-center rounded-lg bg-theme px-4 py-2 text-sm font-medium text-white hover:bg-theme/90 focus:outline-none focus:ring-4 focus:ring-theme/50"
 					>
 						Read More
 						<svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@ const recentPosts = posts
 	{recentPosts.length > 0 && (
 		<a
 			href="/blog"
-			class="flex flex-row text-black hover:text-orange dark:text-white dark:hover:text-orange"
+			class="flex flex-row text-black hover:text-theme dark:text-white dark:hover:text-theme"
 			aria-label="view all blog posts"
 		>
 			View all blog posts
